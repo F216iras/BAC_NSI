@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cours NSI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">Révision NSI</a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="cours.html" class="active">Cours</a>
+      <a href="exercices.html">Exercices</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:0.5rem">Fiches de cours</h1>
+    <p style="color:var(--muted);margin-bottom:2rem">Synthèses par thème du programme Terminal NSI.</p>
+
+    <div class="tabs" id="tabs"></div>
+    <div id="panels"></div>
+  </div>
+
+  <footer>Révision NSI Terminal</footer>
+
+  <script>
+    const COURS = [
+      {
+        id: "structures",
+        titre: "Structures de données",
+        points_cles: [
+          "Pile (LIFO) : push / pop / peek — utilisée pour les appels récursifs et le DFS",
+          "File (FIFO) : enqueue / dequeue — utilisée pour le BFS",
+          "Liste chaînée : accès O(n), insertion/suppression en tête O(1)",
+          "Arbre binaire de recherche : recherche O(log n) si équilibré",
+          "Arbre : graphe connexe acyclique avec n-1 arêtes pour n sommets",
+          "Graphe connexe : il existe un chemin entre tout couple de sommets"
+        ],
+        sections: [
+          { titre: "Pile (Stack)", texte: "Une pile est une structure LIFO (Last In, First Out). Les opérations sont :<br><br>• <strong>push</strong> : empiler un élément au sommet<br>• <strong>pop</strong> : retirer et retourner l'élément du sommet<br>• <strong>peek</strong> : lire le sommet sans le retirer<br>• <strong>isEmpty</strong> : tester si la pile est vide<br><br>Utilisations : gestion des appels de fonctions (call stack), évaluation d'expressions, algorithme DFS, annulation (Ctrl+Z)." },
+          { titre: "File (Queue)", texte: "Une file est une structure FIFO (First In, First Out). Les opérations sont :<br><br>• <strong>enqueue</strong> : enfiler un élément en queue<br>• <strong>dequeue</strong> : défiler l'élément en tête<br>• <strong>front</strong> : lire la tête sans la retirer<br><br>Utilisations : parcours en largeur (BFS), files d'attente, impression." },
+          { titre: "Arbres binaires", texte: "Un arbre est un graphe connexe et acyclique. Propriétés :<br><br>• La <strong>racine</strong> est le seul noeud sans parent<br>• Les <strong>feuilles</strong> sont les noeuds sans enfants<br>• La <strong>hauteur</strong> = longueur du plus long chemin racine→feuille (0 si seule la racine)<br>• Un arbre à n sommets a exactement <strong>n−1 arêtes</strong><br><br><strong>ABR (Arbre Binaire de Recherche)</strong> : pour chaque noeud, le sous-arbre gauche contient des valeurs inférieures et le sous-arbre droit des valeurs supérieures. Recherche : O(log n) si équilibré, O(n) dans le pire cas.<br><br><strong>Parcours DFS</strong> : préfixe (racine, G, D), infixe (G, racine, D — donne l'ordre croissant dans un ABR), postfixe (G, D, racine)." },
+          { titre: "Graphes", texte: "Un graphe G = (V, E) : V = sommets, E = arêtes.<br><br>• <strong>Orienté (digraphe)</strong> : les arêtes ont une direction<br>• <strong>Pondéré</strong> : chaque arête a un poids<br>• <strong>Connexe</strong> : tout couple de sommets est relié par un chemin<br>• <strong>Acyclique</strong> : sans cycle<br><br>Représentations : matrice d'adjacence (O(n²) espace), liste d'adjacence (O(n+m) espace).<br><br>Algorithmes :<br>• <strong>BFS</strong> (file) : plus court chemin non pondéré, O(V+E)<br>• <strong>DFS</strong> (pile/récursion) : détection de cycles, tri topologique, O(V+E)<br>• <strong>Dijkstra</strong> : plus courts chemins (poids positifs), O((V+E) log V)<br>• <strong>Bellman-Ford</strong> : poids négatifs autorisés, O(V·E)<br>• <strong>Kruskal / Prim</strong> : arbre couvrant minimal" }
+        ]
+      },
+      {
+        id: "algo",
+        titre: "Algorithmique",
+        points_cles: [
+          "O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2^n)",
+          "Diviser pour régner : diviser → résoudre récursivement → combiner",
+          "Tri fusion : O(n log n) dans tous les cas, stable",
+          "Tri rapide : O(n log n) en moyenne, O(n²) dans le pire cas",
+          "Programmation dynamique : mémoïsation + sous-structure optimale",
+          "Invariant de boucle : propriété vraie à chaque itération"
+        ],
+        sections: [
+          { titre: "Complexité algorithmique", texte: "La complexité mesure l'évolution du temps (ou mémoire) en fonction de la taille n de l'entrée.<br><br>• <strong>O(1)</strong> : constant — accès à un tableau par index<br>• <strong>O(log n)</strong> : logarithmique — recherche dichotomique<br>• <strong>O(n)</strong> : linéaire — parcours d'une liste<br>• <strong>O(n log n)</strong> : tri fusion, tri rapide (moyen)<br>• <strong>O(n²)</strong> : tri bulles, tri sélection, tri insertion (pire cas)<br>• <strong>O(2^n)</strong> : Fibonacci naïf, sous-ensembles<br><br>On s'intéresse au <strong>pire cas</strong> pour garantir une borne supérieure." },
+          { titre: "Diviser pour régner", texte: "Principe en 3 étapes :<br>1. <strong>Diviser</strong> : découper le problème en sous-problèmes de même nature mais plus petits<br>2. <strong>Résoudre</strong> : traiter chaque sous-problème récursivement<br>3. <strong>Combiner</strong> : fusionner les solutions<br><br>Exemples :<br>• <strong>Tri fusion</strong> : diviser en deux moitiés, trier chacune, fusionner → O(n log n)<br>• <strong>Tri rapide</strong> : partitionner autour d'un pivot → O(n log n) en moyenne<br>• <strong>Recherche dichotomique</strong> : diviser l'espace par 2 → O(log n)" },
+          { titre: "Programmation dynamique", texte: "Applicable quand :<br>• <strong>Sous-structure optimale</strong> : la solution optimale est composée de solutions optimales de sous-problèmes<br>• <strong>Sous-problèmes chevauchants</strong> : les mêmes sous-problèmes sont résolus plusieurs fois<br><br>Approches :<br>• <strong>Mémoïsation (top-down)</strong> : récursion + cache des résultats<br>• <strong>Tabulation (bottom-up)</strong> : remplir un tableau itérativement<br><br>Exemples : Fibonacci, sac à dos 0/1, plus longue sous-séquence commune (LCS).<br><br>Fibonacci naïf : O(2^n) → avec PD : O(n)" },
+          { titre: "Prouver un algorithme", texte: "<strong>Invariant de boucle</strong> : propriété P vraie :<br>• <em>Initialisation</em> : avant la 1ère itération<br>• <em>Conservation</em> : si P vraie avant l'itération i, elle est vraie avant l'itération i+1<br>• <em>Terminaison</em> : quand la boucle se termine, P donne le résultat correct<br><br><strong>Terminaison</strong> : montrer qu'une quantité entière positive (variant de boucle) décroît strictement à chaque itération." }
+        ]
+      },
+      {
+        id: "bdd",
+        titre: "Bases de données",
+        points_cles: [
+          "Modèle relationnel : tables (relations), colonnes (attributs), lignes (tuples)",
+          "Clé primaire : identifiant unique, jamais NULL",
+          "Clé étrangère : référence la clé primaire d'une autre table",
+          "ACID : Atomicité, Cohérence, Isolation, Durabilité",
+          "WHERE filtre les lignes — GROUP BY regroupe — HAVING filtre les groupes",
+          "JOIN combine des lignes de plusieurs tables"
+        ],
+        sections: [
+          { titre: "Modèle relationnel", texte: "Une base relationnelle organise les données en <strong>tables</strong> (relations). Chaque table a :<br>• Des <strong>attributs</strong> (colonnes) avec un type et des contraintes<br>• Des <strong>tuples</strong> (lignes / enregistrements)<br>• Une <strong>clé primaire</strong> : ensemble minimal d'attributs qui identifie uniquement chaque tuple (jamais NULL)<br>• Des <strong>clés étrangères</strong> : attributs qui référencent la clé primaire d'une autre table<br><br>Contraintes d'intégrité : PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, CHECK." },
+          { titre: "SQL essentiel", texte: "<strong>Sélection :</strong><br><code>SELECT col1, col2 FROM table WHERE condition ORDER BY col ASC/DESC LIMIT n;</code><br><br><strong>Fonctions d'agrégation :</strong> COUNT(*), SUM(col), AVG(col), MAX(col), MIN(col)<br><br><strong>Regroupement :</strong><br><code>SELECT classe, COUNT(*) FROM eleves GROUP BY classe HAVING COUNT(*) > 10;</code><br><br><strong>Jointure :</strong><br><code>SELECT e.nom, c.intitule FROM eleves e JOIN cours c ON e.cours_id = c.id;</code><br><br>Types de JOIN : INNER JOIN (intersection), LEFT JOIN (tous de gauche), FULL OUTER JOIN (tous des deux).<br><br><strong>Modification :</strong><br><code>INSERT INTO table (col) VALUES (val);</code><br><code>UPDATE table SET col = val WHERE condition;</code><br><code>DELETE FROM table WHERE condition;</code>" },
+          { titre: "Transactions et ACID", texte: "Une <strong>transaction</strong> regroupe des opérations qui forment une unité indivisible :<br><br><code>BEGIN;</code><br><code>  UPDATE comptes SET solde = solde - 100 WHERE id = 1;</code><br><code>  UPDATE comptes SET solde = solde + 100 WHERE id = 2;</code><br><code>COMMIT;  -- ou ROLLBACK si erreur</code><br><br><strong>Propriétés ACID :</strong><br>• <strong>A</strong>tomicité : tout ou rien<br>• <strong>C</strong>ohérence : la base passe d'un état valide à un autre<br>• <strong>I</strong>solation : les transactions concurrentes ne s'interfèrent pas<br>• <strong>D</strong>urabilité : une transaction validée est persistée même en cas de panne" }
+        ]
+      },
+      {
+        id: "archi",
+        titre: "Architectures et OS",
+        points_cles: [
+          "Modèle Von Neumann : UAL + UC + Mémoire centrale + E/S",
+          "Processus : programme en exécution (PCB, états : prêt / actif / bloqué)",
+          "Ordonnanceur : décide quel processus obtient le CPU",
+          "Deadlock : processus A attend ressource de B, B attend ressource de A",
+          "1 Ko = 1024 octets = 2^10 octets, 1 octet = 8 bits",
+          "Complément à 2 : représentation des entiers négatifs en binaire"
+        ],
+        sections: [
+          { titre: "Architecture Von Neumann", texte: "Les ordinateurs modernes sont basés sur ce modèle (1945) :<br><br>• <strong>UAL</strong> (Unité Arithmétique et Logique) : effectue les calculs et opérations logiques<br>• <strong>UC</strong> (Unité de Contrôle) : décode et coordonne l'exécution des instructions<br>• <strong>Mémoire centrale</strong> : stocke les programmes et données en cours d'exécution<br>• <strong>E/S</strong> (Entrées/Sorties) : communication avec l'extérieur (clavier, écran, disque…)<br>• <strong>Bus</strong> : canal de communication entre ces composants<br><br>Les registres (dans le CPU) sont la mémoire la plus rapide mais la plus limitée. La hiérarchie : Registres > Cache L1/L2/L3 > RAM > Disque." },
+          { titre: "Processus et ordonnancement", texte: "Un <strong>processus</strong> = programme en cours d'exécution. Le <strong>PCB</strong> (Process Control Block) stocke : PID, état, valeur des registres, espace mémoire, fichiers ouverts.<br><br><strong>États d'un processus :</strong><br>• <strong>Prêt</strong> : attend le CPU<br>• <strong>Actif</strong> : s'exécute sur le CPU<br>• <strong>Bloqué</strong> : attend une ressource (E/S, verrou)<br><br><strong>Ordonnancement</strong> : FIFO, Round Robin (quantum de temps), Priorité.<br><br><strong>Thread</strong> = fil d'exécution léger qui partage l'espace mémoire du processus.<br><br><strong>Deadlock</strong> : situation où des processus s'attendent mutuellement indéfiniment (cycle d'attente de ressources)." },
+          { titre: "Systèmes de numération", texte: "<strong>Conversions :</strong><br>• Décimal → Binaire : diviser successivement par 2, lire les restes à rebours<br>• 13 = 8+4+1 = <strong>1101</strong> en binaire<br>• Binaire → Hexadécimal : groupes de 4 bits → 1 chiffre hex (0-9, A-F)<br>• FF hex = 15×16 + 15 = <strong>255</strong> en décimal<br><br><strong>Tailles :</strong> 1 bit = 0 ou 1 | 1 octet = 8 bits | 1 Ko = 1024 octets | 1 Mo = 1024 Ko | 1 Go = 1024 Mo<br><br><strong>Complément à 2</strong> (entiers négatifs sur n bits) : inverser tous les bits puis ajouter 1.<br>Ex : -5 sur 8 bits → NOT(00000101) + 1 = 11111010 + 1 = <strong>11111011</strong>" }
+        ]
+      },
+      {
+        id: "reseaux",
+        titre: "Réseaux",
+        points_cles: [
+          "Modèle OSI : 7 couches — Physique (1) à Application (7)",
+          "TCP : orienté connexion, fiable | UDP : sans connexion, rapide",
+          "Adresses privées : 10.x.x.x, 172.16-31.x.x, 192.168.x.x",
+          "HTTPS = HTTP + TLS (port 443) | HTTP = port 80",
+          "DNS : traduit les noms de domaine en adresses IP",
+          "/24 = 255.255.255.0 — laisse 8 bits pour les hôtes (254 adresses)"
+        ],
+        sections: [
+          { titre: "Modèle OSI et protocoles", texte: "Le modèle OSI a 7 couches :<br>7. <strong>Application</strong> : HTTP, HTTPS, FTP, SMTP, DNS<br>6. <strong>Présentation</strong> : chiffrement, compression<br>5. <strong>Session</strong> : gestion des sessions<br>4. <strong>Transport</strong> : TCP, UDP (ports)<br>3. <strong>Réseau</strong> : IP, ICMP, routage<br>2. <strong>Liaison</strong> : Ethernet, WiFi, MAC<br>1. <strong>Physique</strong> : câbles, signaux<br><br><strong>TCP</strong> (Transmission Control Protocol) : établit une connexion (3-way handshake), garantit l'ordre et la livraison, contrôle de flux. Utilisé pour : HTTP, email.<br><br><strong>UDP</strong> (User Datagram Protocol) : sans connexion, pas de garantie. Utilisé pour : DNS, streaming, jeux en ligne." },
+          { titre: "Adressage IP", texte: "<strong>IPv4</strong> : 32 bits, 4 octets séparés par des points (ex: 192.168.1.1).<br><br><strong>Masque de sous-réseau</strong> : sépare la partie réseau (fixe) de la partie hôte (variable).<br>/24 → 255.255.255.0 → 254 hôtes possibles (2^8 - 2)<br>/16 → 255.255.0.0 → 65534 hôtes<br><br><strong>Adresses réservées (RFC 1918) :</strong><br>• 10.0.0.0/8<br>• 172.16.0.0/12<br>• 192.168.0.0/16<br><br>• 127.0.0.1 = loopback (localhost)<br>• Adresse de broadcast : tous les bits hôte à 1<br><br><strong>IPv6</strong> : 128 bits, notation hexadécimale (ex: 2001:db8::1)" },
+          { titre: "Sécurité réseau", texte: "<strong>HTTPS</strong> = HTTP + TLS (Transport Layer Security). TLS assure :<br>• <strong>Confidentialité</strong> : chiffrement des données<br>• <strong>Intégrité</strong> : détection des modifications<br>• <strong>Authentification</strong> : vérification du serveur (certificat)<br><br><strong>Chiffrement symétrique</strong> (AES) : même clé pour chiffrer/déchiffrer → rapide.<br><strong>Chiffrement asymétrique</strong> (RSA) : clé publique (chiffrement) + clé privée (déchiffrement) → échange de clés.<br><br><strong>Pare-feu</strong> : filtre le trafic selon des règles (IP source/destination, port, protocole).<br><br><strong>DNS</strong> : système hiérarchique de résolution de noms. La commande <code>ping</code> teste la connectivité (ICMP). <code>traceroute</code> affiche le chemin réseau." }
+        ]
+      },
+      {
+        id: "prog",
+        titre: "Langages et programmation",
+        points_cles: [
+          "Python : typage dynamique, interprété, tout est objet",
+          "POO : Encapsulation, Héritage, Polymorphisme, Abstraction (HEPA)",
+          "try/except/else/finally pour la gestion des exceptions",
+          "Liste [] mutable | Tuple () immuable | Dict {} clé:valeur | Set {} unique",
+          "Paradigmes : impératif, fonctionnel, orienté objet",
+          "Lambda : fonction anonyme en une ligne"
+        ],
+        sections: [
+          { titre: "Python essentiel", texte: "<strong>Structures de données :</strong><br>• <code>list</code> [] : ordonnée, mutable, doublons autorisés<br>• <code>tuple</code> () : ordonnée, immuable<br>• <code>dict</code> {} : clé→valeur, clés uniques, ordonnée (Python 3.7+)<br>• <code>set</code> {} : non ordonnée, sans doublons<br><br><strong>Fonctions utiles :</strong> len(), range(), enumerate(), zip(), map(), filter(), sorted(), reversed()<br><br><strong>Compréhension de liste :</strong><br><code>[x**2 for x in range(10) if x % 2 == 0]</code><br><br><strong>Slicing :</strong> <code>L[début:fin:pas]</code> — <code>L[::-1]</code> inverse la séquence<br><br><strong>Lambda :</strong> <code>f = lambda x, y: x + y</code>" },
+          { titre: "Programmation Orientée Objet", texte: "<strong>4 piliers :</strong><br>• <strong>Encapsulation</strong> : regrouper données et méthodes, protéger l'état interne (<code>__attribut</code>)<br>• <strong>Héritage</strong> : une classe fille réutilise le code d'une classe parente<br>• <strong>Polymorphisme</strong> : même interface, comportements différents selon la classe<br>• <strong>Abstraction</strong> : exposer uniquement ce qui est nécessaire<br><br><strong>Syntaxe Python :</strong><br><code>class Animal:</code><br><code>&nbsp;&nbsp;def __init__(self, nom):</code><br><code>&nbsp;&nbsp;&nbsp;&nbsp;self.nom = nom</code><br><code>&nbsp;&nbsp;def parler(self): pass</code><br><br><code>class Chien(Animal):</code><br><code>&nbsp;&nbsp;def parler(self): return 'Waf!'</code><br><br><code>super().__init__(nom)</code> — appeler le constructeur parent" },
+          { titre: "Gestion des exceptions", texte: "<strong>Structure try/except :</strong><br><code>try:</code><br><code>&nbsp;&nbsp;résultat = 10 / x</code><br><code>except ZeroDivisionError:</code><br><code>&nbsp;&nbsp;print('Division par zéro')</code><br><code>except (TypeError, ValueError) as e:</code><br><code>&nbsp;&nbsp;print(f'Erreur : {e}')</code><br><code>else:</code><br><code>&nbsp;&nbsp;print('Succès !')  # si pas d'exception</code><br><code>finally:</code><br><code>&nbsp;&nbsp;print('Toujours exécuté')</code><br><br>Exceptions courantes : <code>ValueError</code>, <code>TypeError</code>, <code>IndexError</code>, <code>KeyError</code>, <code>FileNotFoundError</code>, <code>RecursionError</code><br><br>Lever une exception : <code>raise ValueError('message')</code>" }
+        ]
+      },
+      {
+        id: "recursivite",
+        titre: "Récursivité",
+        points_cles: [
+          "Cas de base obligatoire (condition d'arrêt)",
+          "L'appel récursif doit se rapprocher du cas de base",
+          "Stack overflow si profondeur > 1000 (sys.getrecursionlimit())",
+          "Fibonacci naïf : O(2^n) → avec mémoïsation : O(n)",
+          "Chaque appel empile un nouveau frame sur la call stack",
+          "Récursion et itération sont équivalentes en puissance"
+        ],
+        sections: [
+          { titre: "Principes fondamentaux", texte: "Une fonction récursive <strong>s'appelle elle-même</strong>. Elle doit obligatoirement avoir :<br><br>1. <strong>Un cas de base</strong> : condition d'arrêt qui retourne un résultat directement<br>2. <strong>Un appel récursif</strong> : sur une instance strictement plus petite du problème<br><br>À chaque appel, un nouveau <strong>frame</strong> (contexte d'exécution) est empilé sur la <strong>call stack</strong> avec les variables locales. Quand le cas de base est atteint, les frames se dépilent et les résultats remontent.<br><br>Si la profondeur dépasse <code>sys.getrecursionlimit()</code> (1000 par défaut) : <strong>RecursionError</strong>." },
+          { titre: "Exemples fondamentaux", texte: "<strong>Factorielle :</strong><br><code>def fact(n):</code><br><code>&nbsp;&nbsp;if n == 0: return 1  # cas de base</code><br><code>&nbsp;&nbsp;return n * fact(n-1)  # appel récursif</code><br><br><strong>Fibonacci (naïf — O(2^n)) :</strong><br><code>def fib(n):</code><br><code>&nbsp;&nbsp;if n <= 1: return n</code><br><code>&nbsp;&nbsp;return fib(n-1) + fib(n-2)</code><br><br><strong>Fibonacci (avec mémoïsation — O(n)) :</strong><br><code>from functools import lru_cache</code><br><code>@lru_cache(maxsize=None)</code><br><code>def fib(n):</code><br><code>&nbsp;&nbsp;if n <= 1: return n</code><br><code>&nbsp;&nbsp;return fib(n-1) + fib(n-2)</code><br><br><strong>Tours de Hanoï :</strong><br><code>def hanoi(n, source, cible, auxiliaire):</code><br><code>&nbsp;&nbsp;if n == 0: return</code><br><code>&nbsp;&nbsp;hanoi(n-1, source, auxiliaire, cible)</code><br><code>&nbsp;&nbsp;print(f'Déplacer {source} → {cible}')</code><br><code>&nbsp;&nbsp;hanoi(n-1, auxiliaire, cible, source)</code>" },
+          { titre: "Optimisation et limites", texte: "<strong>Récursion vs Itération</strong> : équivalentes en puissance de calcul. Tout algorithme récursif peut être converti en itératif (avec une pile explicite si nécessaire).<br><br><strong>Mémoïsation (top-down)</strong> : stocker les résultats déjà calculés.<br><code>from functools import lru_cache</code> — décorateur Python intégré.<br><br><strong>Tabulation (bottom-up)</strong> : remplir un tableau de la base vers le haut.<br>Ex: Fibonacci itératif en O(n) avec O(1) espace :<br><code>a, b = 0, 1</code><br><code>for _ in range(n): a, b = b, a+b</code><br><br><strong>Récursion terminale (tail call)</strong> : l'appel récursif est la dernière opération. Certains langages l'optimisent (Python ne le fait pas par défaut).<br><br><strong>Récursion mutuelle</strong> : A appelle B et B appelle A (ex: isEven/isOdd)." }
+        ]
+      }
+    ];
+
+    const tabsEl = document.getElementById('tabs');
+    const panelsEl = document.getElementById('panels');
+
+    COURS.forEach((c, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+      btn.textContent = c.titre;
+      btn.onclick = () => switchTab(c.id);
+      tabsEl.appendChild(btn);
+
+      const panel = document.createElement('div');
+      panel.id = 'panel-' + c.id;
+      panel.className = 'cours-panel' + (i === 0 ? ' active' : '');
+
+      const ptsHtml = c.points_cles.map(p => `<li>${p}</li>`).join('');
+      const sectionsHtml = c.sections.map(s => `
+        <div class="accordion-item">
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            ${s.titre}
+            <span class="arrow">▼</span>
+          </button>
+          <div class="accordion-content">${s.texte}</div>
+        </div>
+      `).join('');
+
+      panel.innerHTML = `
+        <div class="cours-title">${c.titre}</div>
+        <div class="points-cles">
+          <h3>Points clés</h3>
+          <ul>${ptsHtml}</ul>
+        </div>
+        <div class="accordion">${sectionsHtml}</div>
+      `;
+      panelsEl.appendChild(panel);
+    });
+
+    function switchTab(id) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('active', COURS[i].id === id);
+      });
+      document.querySelectorAll('.cours-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-' + id);
+      });
+    }
+
+    function toggleAccordion(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      btn.classList.toggle('open', !isOpen);
+      content.classList.toggle('open', !isOpen);
+    }
+
+    document.querySelector('.accordion-btn').click();
+  </script>
+</body>
+</html>

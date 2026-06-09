@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz NSI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">Révision NSI</a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="quiz.html" class="active">Quiz</a>
+      <a href="cours.html">Cours</a>
+      <a href="exercices.html">Exercices</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="quiz-wrap">
+      <div id="start-screen" style="text-align:center;padding:3rem 1rem">
+        <div style="font-size:3rem;margin-bottom:1rem">🎯</div>
+        <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:0.75rem">Quiz NSI Terminal</h1>
+        <p style="color:var(--muted);max-width:440px;margin:0 auto 2rem">20 questions tirées aléatoirement parmi 100. Répondez à chacune et obtenez votre note finale sur 20.</p>
+        <button class="btn" onclick="startQuiz()">Commencer le quiz</button>
+      </div>
+
+      <div id="quiz-screen" style="display:none">
+        <div class="quiz-header">
+          <span id="q-counter" style="color:var(--muted);font-size:0.9rem">Question 1 / 20</span>
+          <span id="score-live" style="color:var(--primary-light);font-size:0.9rem;font-weight:600">Score : 0</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:5%"></div>
+        </div>
+        <div class="question-card">
+          <div class="theme-badge" id="q-theme"></div>
+          <div class="question-num" id="q-num"></div>
+          <div class="question-text" id="q-text"></div>
+          <div class="options" id="options"></div>
+          <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none">Question suivante →</button>
+        </div>
+      </div>
+
+      <div id="result-screen" style="display:none">
+        <div class="score-card">
+          <div class="score-num" id="final-score"></div>
+          <div class="score-label">points sur 20</div>
+          <div class="score-msg" id="score-msg"></div>
+          <p id="score-detail" style="color:var(--muted);font-size:0.9rem;margin-top:0.5rem"></p>
+          <div class="score-actions">
+            <button class="btn" onclick="startQuiz()">Rejouer</button>
+            <a class="btn btn-outline" href="cours.html">Revoir les cours</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Révision NSI Terminal</footer>
+
+  <script>
+    const ALL_QUESTIONS = [
+      { id:1, theme:"Structures de données", question:"Quelle structure de données suit le principe LIFO (Last In, First Out) ?", options:["File","Pile","Liste chaînée","Arbre"], correctAnswer:1, explanation:"Une pile (stack) suit le principe LIFO : le dernier élément inséré est le premier à être retiré." },
+      { id:2, theme:"Structures de données", question:"Dans une file (queue), quel est le principe de gestion ?", options:["LIFO","FILO","FIFO","FOLS"], correctAnswer:2, explanation:"Une file suit le principe FIFO : First In, First Out. Le premier élément entré est le premier sorti." },
+      { id:3, theme:"Structures de données", question:"Quelle est la complexité d'accès à un élément d'une liste chaînée par son index ?", options:["O(1)","O(log n)","O(n)","O(n²)"], correctAnswer:2, explanation:"L'accès par index dans une liste chaînée est O(n) car il faut parcourir les éléments un par un depuis le début." },
+      { id:4, theme:"Structures de données", question:"Un arbre binaire de recherche (ABR) garantit que pour chaque noeud :", options:["Les fils gauches sont supérieurs","Les fils gauches sont inférieurs et les fils droits sont supérieurs","Tous les fils ont la même valeur","La racine est toujours la plus grande valeur"], correctAnswer:1, explanation:"Dans un ABR, tous les noeuds du sous-arbre gauche sont strictement inférieurs au noeud courant, et tous ceux du sous-arbre droit sont supérieurs." },
+      { id:5, theme:"Structures de données", question:"Quelle est la hauteur d'un arbre avec un seul noeud (la racine) ?", options:["0","1","-1","2"], correctAnswer:0, explanation:"Par convention, un arbre avec seulement la racine a une hauteur de 0." },
+      { id:6, theme:"Structures de données", question:"Dans un graphe, qu'est-ce qu'un graphe connexe ?", options:["Un graphe sans cycle","Un graphe où tous les sommets ont le même degré","Un graphe où il existe un chemin entre toute paire de sommets","Un graphe orienté sans circuit"], correctAnswer:2, explanation:"Un graphe est connexe s'il existe un chemin entre n'importe quelle paire de sommets du graphe." },
+      { id:7, theme:"Structures de données", question:"Quelle structure est la mieux adaptée pour implémenter un parcours en largeur (BFS) ?", options:["Pile","File","Tableau trié","Arbre AVL"], correctAnswer:1, explanation:"Le BFS utilise une file (FIFO) pour explorer les voisins niveau par niveau." },
+      { id:8, theme:"Structures de données", question:"Un arbre est-il un type particulier de graphe ?", options:["Non, ce sont deux structures indépendantes","Oui, c'est un graphe connexe sans cycle","Oui, c'est un graphe orienté complet","Non, un arbre peut avoir des cycles"], correctAnswer:1, explanation:"Un arbre est bien un graphe : c'est un graphe non orienté, connexe et acyclique." },
+      { id:9, theme:"Structures de données", question:"Quelle opération n'est PAS standard sur une pile ?", options:["push (empiler)","pop (dépiler)","peek (sommet)","enqueue (enfiler)"], correctAnswer:3, explanation:"enqueue est une opération de file, pas de pile." },
+      { id:10, theme:"Structures de données", question:"Dans un arbre binaire, un noeud feuille est un noeud qui :", options:["A exactement deux fils","N'a pas de fils","Est la racine","A un seul fils"], correctAnswer:1, explanation:"Un noeud feuille est un noeud sans enfants." },
+      { id:11, theme:"Structures de données", question:"Quelle est la complexité de recherche dans un ABR équilibré ?", options:["O(1)","O(log n)","O(n)","O(n log n)"], correctAnswer:1, explanation:"Dans un ABR équilibré, la recherche se fait en O(log n)." },
+      { id:12, theme:"Structures de données", question:"Un graphe orienté est appelé un :", options:["Multigraphe","Digraphe","Hypergraphe","Graphe biparti"], correctAnswer:1, explanation:"Un graphe orienté est aussi appelé digraphe (directed graph)." },
+      { id:13, theme:"Structures de données", question:"Combien d'arêtes possède un arbre à n sommets ?", options:["n","n-1","n+1","2n"], correctAnswer:1, explanation:"Un arbre à n sommets possède exactement n-1 arêtes." },
+      { id:14, theme:"Structures de données", question:"Un arbre binaire parfait de hauteur h contient combien de noeuds ?", options:["2h","2^h - 1","2^(h+1) - 1","h²"], correctAnswer:2, explanation:"Un arbre binaire parfait de hauteur h a 2^(h+1) - 1 noeuds." },
+      { id:15, theme:"Algorithmique", question:"Quel est le principe de l'algorithme 'diviser pour régner' ?", options:["Résoudre le problème en une seule passe","Diviser en sous-problèmes indépendants, résoudre chacun, combiner","Utiliser une table de hachage","Trier d'abord puis chercher"], correctAnswer:1, explanation:"Diviser pour régner : on découpe le problème en sous-problèmes de même nature, on les résout récursivement, puis on combine les solutions." },
+      { id:16, theme:"Algorithmique", question:"Quelle est la complexité temporelle du tri fusion (merge sort) ?", options:["O(n)","O(n log n)","O(n²)","O(log n)"], correctAnswer:1, explanation:"Le tri fusion a une complexité de O(n log n) dans tous les cas." },
+      { id:17, theme:"Algorithmique", question:"La programmation dynamique est adaptée pour :", options:["Les problèmes sans sous-problèmes","Les problèmes avec sous-problèmes chevauchants et sous-structure optimale","Les problèmes de tri uniquement","Les graphes non pondérés"], correctAnswer:1, explanation:"La PD exploite les sous-problèmes chevauchants (on mémorise les résultats) et la sous-structure optimale." },
+      { id:18, theme:"Algorithmique", question:"Quel algorithme utilise la technique 'glouton' (greedy) ?", options:["Tri fusion","Recherche dichotomique","Algorithme de Dijkstra","Tri à bulles"], correctAnswer:2, explanation:"L'algorithme de Dijkstra est un algorithme glouton : il choisit toujours le sommet avec la plus petite distance connue." },
+      { id:19, theme:"Algorithmique", question:"Quelle est la complexité de la recherche dichotomique ?", options:["O(1)","O(log n)","O(n)","O(n log n)"], correctAnswer:1, explanation:"La dichotomie divise l'espace de recherche par 2 à chaque étape : O(log n)." },
+      { id:20, theme:"Algorithmique", question:"Qu'est-ce qu'un invariant de boucle ?", options:["Une variable qui ne change pas","Une propriété vraie avant, pendant et après chaque itération","Le nombre d'itérations maximum","La condition d'arrêt"], correctAnswer:1, explanation:"Un invariant de boucle est une propriété logique vraie avant chaque itération. Il sert à prouver la correction d'un algorithme." },
+      { id:21, theme:"Algorithmique", question:"Quelle est la complexité du tri rapide dans le pire cas ?", options:["O(n log n)","O(n)","O(n²)","O(log n)"], correctAnswer:2, explanation:"Dans le pire cas (tableau déjà trié, pivot mal choisi), le quicksort est O(n²)." },
+      { id:22, theme:"Algorithmique", question:"La mémoïsation consiste à :", options:["Trier les données avant traitement","Stocker les résultats de sous-problèmes déjà calculés","Diviser le problème en deux moitiés","Utiliser des pointeurs"], correctAnswer:1, explanation:"La mémoïsation stocke les résultats pour éviter de les recalculer (top-down de la PD)." },
+      { id:23, theme:"Algorithmique", question:"Quel tri a une complexité O(n²) dans tous les cas ?", options:["Tri fusion","Tri rapide","Tri par insertion","Tri par sélection"], correctAnswer:3, explanation:"Le tri par sélection est toujours O(n²) car il fait toujours n(n-1)/2 comparaisons." },
+      { id:24, theme:"Algorithmique", question:"Quelle notation exprime une complexité constante ?", options:["O(n)","O(log n)","O(1)","O(n!)"], correctAnswer:2, explanation:"O(1) signifie que le temps d'exécution est constant, quelle que soit la taille de l'entrée." },
+      { id:25, theme:"Algorithmique", question:"L'algorithme de Kruskal résout :", options:["Chemin le plus court entre deux sommets","Tri d'un tableau","Arbre couvrant de poids minimal","Recherche de cycle"], correctAnswer:2, explanation:"Kruskal trouve l'arbre couvrant minimal (MST) en sélectionnant les arêtes de poids minimal sans créer de cycle." },
+      { id:26, theme:"Algorithmique", question:"Un algorithme de complexité O(2^n) est dit :", options:["Polynomial","Logarithmique","Exponentiel","Linéaire"], correctAnswer:2, explanation:"O(2^n) est une complexité exponentielle, très vite impraticable." },
+      { id:27, theme:"Algorithmique", question:"L'algorithme de Bellman-Ford résout :", options:["Le tri d'un tableau","Le chemin le plus court même avec des poids négatifs","La recherche de composantes connexes","Le voyageur de commerce"], correctAnswer:1, explanation:"Bellman-Ford calcule les plus courts chemins même avec des arêtes de poids négatif (contrairement à Dijkstra)." },
+      { id:28, theme:"Algorithmique", question:"Le tri par insertion est efficace pour :", options:["Des tableaux aléatoires de grande taille","Des tableaux presque triés de petite taille","Tous les types de données","Les tableaux en ordre décroissant uniquement"], correctAnswer:1, explanation:"Le tri par insertion est efficace sur des tableaux presque triés (proche de O(n)) et sur de petits tableaux." },
+      { id:29, theme:"Bases de données", question:"Dans le modèle relationnel, une clé primaire est :", options:["Un attribut qui peut être nul","Un attribut qui identifie de manière unique chaque tuple","N'importe quel attribut de la relation","Un attribut référençant une autre table"], correctAnswer:1, explanation:"La clé primaire identifie de façon unique chaque enregistrement. Elle ne peut pas être nulle." },
+      { id:30, theme:"Bases de données", question:"Quelle clause SQL permet de filtrer les résultats ?", options:["ORDER BY","GROUP BY","WHERE","HAVING"], correctAnswer:2, explanation:"WHERE filtre les lignes avant regroupement. HAVING filtre après regroupement." },
+      { id:31, theme:"Bases de données", question:"Une clé étrangère est utilisée pour :", options:["Chiffrer les données","Établir une relation entre deux tables","Créer un index","Définir la clé primaire"], correctAnswer:1, explanation:"Une clé étrangère référence la clé primaire d'une autre table, établissant une relation." },
+      { id:32, theme:"Bases de données", question:"Quelle requête sélectionne toutes les colonnes de la table 'eleves' ?", options:["GET * FROM eleves","SELECT ALL eleves","SELECT * FROM eleves","SHOW TABLE eleves"], correctAnswer:2, explanation:"SELECT * FROM nom_table est la syntaxe correcte." },
+      { id:33, theme:"Bases de données", question:"Que fait la clause JOIN en SQL ?", options:["Trie les résultats","Filtre les doublons","Combine des lignes de deux tables selon une condition","Groupe les résultats"], correctAnswer:2, explanation:"JOIN combine des lignes de plusieurs tables selon une condition de jointure." },
+      { id:34, theme:"Bases de données", question:"ACID signifie :", options:["Atomicité, Cohérence, Isolation, Durabilité","Association, Création, Intégration, Distribution","Accès, Connexion, Indexation, Données","Algorithme, Code, Itération, Définition"], correctAnswer:0, explanation:"ACID : Atomicité (tout ou rien), Cohérence, Isolation, Durabilité." },
+      { id:35, theme:"Bases de données", question:"Différence entre DELETE et DROP en SQL ?", options:["Aucune différence","DELETE supprime des lignes, DROP supprime la table","DELETE supprime la table, DROP supprime des lignes","DROP est pour les index"], correctAnswer:1, explanation:"DELETE supprime des enregistrements. DROP supprime la structure de la table entière." },
+      { id:36, theme:"Bases de données", question:"La normalisation d'une base de données permet de :", options:["Convertir les données en minuscules","Réduire la redondance et les anomalies","Crypter les données","Indexer toutes les colonnes"], correctAnswer:1, explanation:"La normalisation organise les tables pour réduire la redondance et prévenir les anomalies." },
+      { id:37, theme:"Bases de données", question:"'SELECT COUNT(*) FROM eleves' retourne :", options:["La liste de tous les élèves","Le nombre total de lignes dans la table","La taille de la table en octets","Le premier enregistrement"], correctAnswer:1, explanation:"COUNT(*) est une fonction d'agrégation qui retourne le nombre total de lignes." },
+      { id:38, theme:"Bases de données", question:"Quel type de jointure retourne toutes les lignes des deux tables ?", options:["INNER JOIN","LEFT JOIN","RIGHT JOIN","FULL OUTER JOIN"], correctAnswer:3, explanation:"FULL OUTER JOIN retourne toutes les lignes des deux tables, avec NULL si pas de correspondance." },
+      { id:39, theme:"Bases de données", question:"ORDER BY ... DESC signifie :", options:["Tri alphabétique","Tri par ordre décroissant","Tri par ordre croissant","Tri aléatoire"], correctAnswer:1, explanation:"DESC (descending) trie par ordre décroissant. ASC est l'ordre croissant (valeur par défaut)." },
+      { id:40, theme:"Bases de données", question:"Le mot-clé DISTINCT en SQL permet de :", options:["Trier les résultats","Éliminer les doublons des résultats","Compter les lignes distinctes","Joindre deux tables"], correctAnswer:1, explanation:"SELECT DISTINCT élimine les lignes en double des résultats." },
+      { id:41, theme:"Bases de données", question:"Qu'est-ce qu'un index dans une base de données ?", options:["Une copie de la table","Une structure qui accélère les recherches","Une contrainte d'intégrité","Un type de jointure"], correctAnswer:1, explanation:"Un index (souvent B-tree) accélère les requêtes en évitant de parcourir toute la table." },
+      { id:42, theme:"Bases de données", question:"'SELECT MAX(note) FROM eleves WHERE classe = \"Terminale\"' retourne :", options:["Tous les élèves de Terminale","La note maximale de tous les élèves","La note maximale parmi les élèves de Terminale","Erreur de syntaxe"], correctAnswer:2, explanation:"MAX(note) avec WHERE classe = 'Terminale' retourne la note max uniquement parmi les élèves de Terminale." },
+      { id:43, theme:"Architectures et OS", question:"Dans le modèle Von Neumann, les quatre composants sont :", options:["CPU, GPU, RAM, Disque","UAL, UC, Mémoire, E/S","Registres, Cache, RAM, ROM","ALU, FPU, MMU, DMA"], correctAnswer:1, explanation:"Modèle Von Neumann : UAL (calcul), UC (contrôle), Mémoire centrale, Entrées/Sorties." },
+      { id:44, theme:"Architectures et OS", question:"Qu'est-ce qu'un processus ?", options:["Un programme stocké sur disque","Un programme en cours d'exécution avec ses ressources","Une fonction du système d'exploitation","Un fichier binaire compilé"], correctAnswer:1, explanation:"Un processus est un programme en cours d'exécution, incluant son code, ses données, sa pile et ses ressources." },
+      { id:45, theme:"Architectures et OS", question:"Quel mécanisme permet à un OS de simuler plusieurs processus sur un seul CPU ?", options:["La compilation","La multiprogrammation / ordonnancement","La pagination","Le débogage"], correctAnswer:1, explanation:"L'ordonnancement alloue le CPU alternativement entre les processus, créant l'illusion de parallélisme." },
+      { id:46, theme:"Architectures et OS", question:"Qu'est-ce qu'un deadlock (interblocage) ?", options:["Une erreur de segmentation","Une situation où plusieurs processus s'attendent mutuellement","Un bug dans le code source","Un manque de RAM"], correctAnswer:1, explanation:"Un deadlock : des processus attendent chacun une ressource détenue par l'autre, créant un blocage infini." },
+      { id:47, theme:"Architectures et OS", question:"La mémoire virtuelle permet de :", options:["Augmenter la vitesse du CPU","Utiliser le disque comme extension de la RAM","Crypter les données","Partager les registres"], correctAnswer:1, explanation:"La mémoire virtuelle utilise l'espace disque pour étendre la RAM disponible." },
+      { id:48, theme:"Architectures et OS", question:"La notation binaire du nombre décimal 13 est :", options:["1010","1101","1011","1100"], correctAnswer:1, explanation:"13 en binaire : 8+4+1 = 1101." },
+      { id:49, theme:"Architectures et OS", question:"Que représente l'hexadécimal FF en décimal ?", options:["15","240","255","256"], correctAnswer:2, explanation:"FF = 15×16 + 15 = 240 + 15 = 255." },
+      { id:50, theme:"Architectures et OS", question:"Combien d'octets dans 1 kilo-octet (Ko) en informatique ?", options:["1000","1024","512","2048"], correctAnswer:1, explanation:"En informatique, 1 Ko = 1024 octets (2^10)." },
+      { id:51, theme:"Architectures et OS", question:"Un bit peut prendre combien de valeurs ?", options:["1","2","8","16"], correctAnswer:1, explanation:"Un bit (binary digit) peut valoir 0 ou 1, soit 2 valeurs possibles." },
+      { id:52, theme:"Architectures et OS", question:"Qu'est-ce que le complément à 2 ?", options:["Une méthode de multiplication binaire","Une représentation des entiers négatifs en binaire","Un type de porte logique","Un protocole réseau"], correctAnswer:1, explanation:"Le complément à 2 est la méthode standard pour représenter les entiers négatifs en binaire : NOT(n) + 1." },
+      { id:53, theme:"Architectures et OS", question:"Quelle est la fonction principale d'un système d'exploitation ?", options:["Écrire des programmes","Gérer les ressources matérielles et fournir des services aux applications","Naviguer sur Internet","Compiler le code source"], correctAnswer:1, explanation:"L'OS gère le matériel (CPU, mémoire, E/S, stockage) et fournit une interface abstraite aux applications." },
+      { id:54, theme:"Architectures et OS", question:"Différence entre thread et processus ?", options:["Ils sont identiques","Un thread partage la mémoire du processus, un processus a son propre espace","Un thread est plus lent","Un processus est un sous-ensemble d'un thread"], correctAnswer:1, explanation:"Les threads partagent l'espace mémoire du processus parent. Chaque processus a son propre espace mémoire isolé." },
+      { id:55, theme:"Réseaux", question:"Quelle couche du modèle OSI s'occupe de l'adressage IP ?", options:["Couche physique","Couche liaison","Couche réseau","Couche transport"], correctAnswer:2, explanation:"La couche réseau (couche 3) gère l'adressage logique (IP) et le routage des paquets." },
+      { id:56, theme:"Réseaux", question:"Différence entre TCP et UDP ?", options:["TCP est sans connexion, UDP est avec connexion","TCP est fiable et orienté connexion, UDP est non fiable et sans connexion","TCP est plus rapide","UDP est uniquement pour le web"], correctAnswer:1, explanation:"TCP garantit la livraison et l'ordre. UDP est plus rapide mais sans garantie." },
+      { id:57, theme:"Réseaux", question:"Qu'est-ce qu'une adresse IP 192.168.x.x ?", options:["Une adresse IP publique","Une adresse IP privée (réseau local)","Une adresse multicast","Une adresse de loopback"], correctAnswer:1, explanation:"192.168.0.0/16 est une plage d'adresses privées (RFC 1918), non routables sur Internet." },
+      { id:58, theme:"Réseaux", question:"Le protocole HTTP fonctionne sur quel port par défaut ?", options:["21","25","80","443"], correctAnswer:2, explanation:"HTTP utilise le port 80. HTTPS utilise 443. FTP utilise 21, SMTP utilise 25." },
+      { id:59, theme:"Réseaux", question:"Qu'est-ce que le DNS ?", options:["Un protocole de chiffrement","Un système qui traduit les URL en adresses IP","Un protocole de transfert de fichiers","Un type de pare-feu"], correctAnswer:1, explanation:"DNS (Domain Name System) traduit les noms de domaine (google.com) en adresses IP numériques." },
+      { id:60, theme:"Réseaux", question:"Un masque /24 correspond à :", options:["255.0.0.0","255.255.0.0","255.255.255.0","255.255.255.255"], correctAnswer:2, explanation:"/24 = 24 bits à 1 = 255.255.255.0. Il laisse 8 bits pour les hôtes (254 adresses)." },
+      { id:61, theme:"Réseaux", question:"HTTPS par rapport à HTTP ajoute :", options:["Une vitesse plus élevée","Le chiffrement TLS/SSL","La compression des données","Une authentification anonyme"], correctAnswer:1, explanation:"HTTPS = HTTP + TLS. TLS chiffre la communication pour garantir confidentialité et intégrité." },
+      { id:62, theme:"Réseaux", question:"L'adresse 127.0.0.1 est appelée :", options:["Adresse de broadcast","Adresse loopback (localhost)","Adresse de réseau","Adresse de passerelle"], correctAnswer:1, explanation:"127.0.0.1 est l'adresse de loopback. Tout paquet envoyé ici revient à la machine elle-même." },
+      { id:63, theme:"Réseaux", question:"Qu'est-ce qu'un routeur ?", options:["Un appareil qui amplifie le WiFi","Un équipement qui interconnecte des réseaux et route les paquets","Un type de câble réseau","Un protocole de sécurité"], correctAnswer:1, explanation:"Un routeur interconnecte plusieurs réseaux et détermine le meilleur chemin pour acheminer les paquets." },
+      { id:64, theme:"Réseaux", question:"Combien de bits compose une adresse IPv4 ?", options:["16","32","64","128"], correctAnswer:1, explanation:"Une adresse IPv4 est composée de 32 bits (4 octets). IPv6 utilise 128 bits." },
+      { id:65, theme:"Réseaux", question:"Qu'est-ce qu'un pare-feu (firewall) ?", options:["Un antivirus","Un système qui contrôle le trafic réseau selon des règles","Un protocole de routage","Un type de câble"], correctAnswer:1, explanation:"Un pare-feu filtre le trafic réseau entrant et sortant selon des règles prédéfinies." },
+      { id:66, theme:"Réseaux", question:"HTTPS utilise quel protocole de sécurité ?", options:["SSH","FTP","TLS","IPSec"], correctAnswer:2, explanation:"HTTPS utilise TLS (Transport Layer Security), successeur de SSL." },
+      { id:67, theme:"Réseaux", question:"La couche application du modèle OSI comprend :", options:["IP et ICMP","TCP et UDP","HTTP, FTP, SMTP, DNS","Ethernet et WiFi"], correctAnswer:2, explanation:"La couche 7 (application) : HTTP, FTP, SMTP, DNS — les protocoles utilisés par les applications." },
+      { id:68, theme:"Langages et programmation", question:"Qu'est-ce que la programmation orientée objet (POO) ?", options:["Un paradigme basé uniquement sur des fonctions","Un paradigme basé sur des objets regroupant données et méthodes","Un langage spécifique","Un type de base de données"], correctAnswer:1, explanation:"La POO organise le code autour d'objets combinant données (attributs) et comportements (méthodes)." },
+      { id:69, theme:"Langages et programmation", question:"En Python, différence entre liste et tuple ?", options:["Aucune différence","Une liste est immuable, un tuple est mutable","Une liste est mutable, un tuple est immuable","Un tuple est plus lent"], correctAnswer:2, explanation:"Une liste [] est mutable (modifiable). Un tuple () est immuable (non modifiable après création)." },
+      { id:70, theme:"Langages et programmation", question:"Que retourne len([1, 2, 3, 4, 5]) en Python ?", options:["4","5","6","Erreur"], correctAnswer:1, explanation:"len() retourne le nombre d'éléments. La liste contient 5 éléments." },
+      { id:71, theme:"Langages et programmation", question:"Quelle est la sortie de print(2 ** 10) ?", options:["20","1024","210","100"], correctAnswer:1, explanation:"** est l'opérateur de puissance. 2**10 = 2^10 = 1024." },
+      { id:72, theme:"Langages et programmation", question:"Qu'est-ce que l'héritage en POO ?", options:["Copier le code d'une classe","Un mécanisme permettant à une classe de réutiliser attributs et méthodes d'une autre","Un type de variable global","Un algorithme de tri"], correctAnswer:1, explanation:"L'héritage permet à une classe fille de réutiliser le code d'une classe parente." },
+      { id:73, theme:"Langages et programmation", question:"Quel est le type de la valeur None en Python ?", options:["int","str","bool","NoneType"], correctAnswer:3, explanation:"None est de type NoneType. type(None) retourne <class 'NoneType'>." },
+      { id:74, theme:"Langages et programmation", question:"La compréhension [x**2 for x in range(5)] produit :", options:["[1, 4, 9, 16, 25]","[0, 1, 4, 9, 16]","[0, 1, 2, 3, 4]","[2, 4, 6, 8, 10]"], correctAnswer:1, explanation:"range(5) génère 0,1,2,3,4. x**2 donne 0,1,4,9,16." },
+      { id:75, theme:"Langages et programmation", question:"Différence entre '==' et 'is' en Python ?", options:["Ils sont identiques","'==' compare les valeurs, 'is' compare les identités (références mémoire)","'is' compare les valeurs","'is' est plus rapide"], correctAnswer:1, explanation:"'==' teste l'égalité des valeurs. 'is' teste si deux variables pointent vers le même objet en mémoire." },
+      { id:76, theme:"Langages et programmation", question:"Quelle instruction gère les erreurs en Python ?", options:["if/else","try/except","for/while","with/as"], correctAnswer:1, explanation:"try/except capture et gère les exceptions. On peut ajouter finally (toujours exécuté)." },
+      { id:77, theme:"Langages et programmation", question:"Qu'est-ce qu'une fonction lambda en Python ?", options:["Une fonction récursive","Une fonction anonyme à une expression","Une méthode de classe","Un générateur"], correctAnswer:1, explanation:"lambda x: x*2 est une fonction anonyme équivalente à def f(x): return x*2." },
+      { id:78, theme:"Langages et programmation", question:"En Python, que produit 'hello'[::-1] ?", options:["'hello'","'olleh'","Erreur","'ello'"], correctAnswer:1, explanation:"[::-1] inverse la chaîne avec un pas de -1." },
+      { id:79, theme:"Langages et programmation", question:"Les dictionnaires Python sont :", options:["Ordonnés et immuables","Non ordonnés et immuables","Ordonnés depuis Python 3.7 et mutables","Toujours triés par valeur"], correctAnswer:2, explanation:"Depuis Python 3.7, les dicts conservent l'ordre d'insertion et sont mutables." },
+      { id:80, theme:"Langages et programmation", question:"Qu'est-ce que le polymorphisme en POO ?", options:["La capacité d'un objet à changer de classe","Utiliser une interface commune pour des objets de types différents","Un type de données complexe","Un algorithme de recherche"], correctAnswer:1, explanation:"Le polymorphisme : différentes classes peuvent toutes avoir une méthode du même nom avec des comportements différents." },
+      { id:81, theme:"Récursivité", question:"Quelle est la condition indispensable dans toute fonction récursive ?", options:["Un cas de base (condition d'arrêt)","Une variable globale","Un paramètre de type liste","Une boucle while"], correctAnswer:0, explanation:"Tout algorithme récursif doit avoir un cas de base qui arrête la récursion, sinon stack overflow." },
+      { id:82, theme:"Récursivité", question:"Valeur de factorielle(4) si factorielle(n) = n × factorielle(n-1) et factorielle(0) = 1 ?", options:["12","16","24","4"], correctAnswer:2, explanation:"4 × 3 × 2 × 1 = 24." },
+      { id:83, theme:"Récursivité", question:"Quel problème illustre classiquement la récursivité ?", options:["Le tri à bulles","Les tours de Hanoï","La recherche linéaire","Le tri par insertion"], correctAnswer:1, explanation:"Les tours de Hanoï s'expriment naturellement de façon récursive." },
+      { id:84, theme:"Récursivité", question:"Que se passe-t-il si la profondeur de récursion est trop importante en Python ?", options:["Le programme ralentit","Une erreur RecursionError","Python augmente automatiquement la limite","Le programme redémarre"], correctAnswer:1, explanation:"Python lève une RecursionError quand la profondeur dépasse sys.getrecursionlimit() (1000 par défaut)." },
+      { id:85, theme:"Récursivité", question:"Le calcul récursif de Fibonacci sans mémoïsation a une complexité de :", options:["O(n)","O(n log n)","O(2^n)","O(log n)"], correctAnswer:2, explanation:"La version naïve recalcule les mêmes valeurs de nombreuses fois : complexité exponentielle O(2^n)." },
+      { id:86, theme:"Récursivité", question:"La récursion et l'itération sont-elles équivalentes en puissance ?", options:["Non, la récursion est plus puissante","Non, l'itération est plus puissante","Oui, tout algo récursif peut être écrit itérativement","Non, cela dépend du langage"], correctAnswer:2, explanation:"La récursion et l'itération sont équivalentes : tout programme récursif peut être écrit itérativement." },
+      { id:87, theme:"Récursivité", question:"Lors d'un appel récursif, que se passe-t-il sur la pile d'appels ?", options:["Un nouveau contexte est empilé","Le contexte courant est écrasé","La fonction attend sans mémoire","Un nouveau processus est créé"], correctAnswer:0, explanation:"À chaque appel récursif, un nouveau frame est empilé avec les variables locales." },
+      { id:88, theme:"Récursivité", question:"La récursivité terminale (tail recursion) est :", options:["Une récursion sans cas de base","Une récursion où l'appel récursif est la dernière opération","Une récursion avec plusieurs appels","Une boucle déguisée"], correctAnswer:1, explanation:"La tail-call recursion : l'appel récursif est la dernière instruction. Certains compilateurs l'optimisent en boucle." },
+      { id:89, theme:"Récursivité", question:"La récursion croisée (mutuelle) est :", options:["Impossible en Python","Quand deux fonctions s'appellent mutuellement","Un type de boucle infinie","Une optimisation du compilateur"], correctAnswer:1, explanation:"Récursion mutuelle : A appelle B et B appelle A. Ex: isEven(n) = isOdd(n-1)." },
+      { id:90, theme:"Récursivité", question:"La somme récursive sum([1,2,3,4]) vaut :", options:["6","10","24","0"], correctAnswer:1, explanation:"1 + 2 + 3 + 4 = 10." },
+      { id:91, theme:"Algorithmique", question:"Dans un parcours DFS d'un arbre, quels ordres sont valides ?", options:["Préfixe, Infixe, Postfixe","FIFO, LIFO, FILO","Largeur, Profondeur, Mixte","Croissant, Décroissant, Aléatoire"], correctAnswer:0, explanation:"DFS sur un arbre : préfixe (racine, gauche, droit), infixe (gauche, racine, droit), postfixe (gauche, droit, racine)." },
+      { id:92, theme:"Bases de données", question:"Une transaction SQL permet de :", options:["Créer une nouvelle base","Regrouper plusieurs opérations en une unité atomique","Exporter les données","Modifier la structure d'une table"], correctAnswer:1, explanation:"Une transaction regroupe des opérations qui doivent toutes réussir ou toutes échouer (rollback)." },
+      { id:93, theme:"Architectures et OS", question:"Un processeur 64 bits peut adresser au maximum :", options:["4 Go de RAM","16 Eo (exaoctets) théoriquement","256 Mo","8 Go exactement"], correctAnswer:1, explanation:"Un CPU 64 bits peut théoriquement adresser 2^64 octets ≈ 16 exaoctets." },
+      { id:94, theme:"Réseaux", question:"Le modèle client-serveur décrit :", options:["Un réseau pair-à-pair","Une architecture où des clients font des requêtes à des serveurs","Un protocole de chiffrement","Un type de câblage"], correctAnswer:1, explanation:"Client-serveur : les clients font des requêtes et les serveurs répondent. C'est le modèle du Web." },
+      { id:95, theme:"Langages et programmation", question:"Qu'est-ce qu'une exception en programmation ?", options:["Un type de variable","Un événement anormal qui interrompt le flux normal d'exécution","Une fonction récursive","Un commentaire"], correctAnswer:1, explanation:"Une exception est un signal d'erreur qui interrompt l'exécution normale. En Python : try/except." },
+      { id:96, theme:"Réseaux", question:"La commande 'ping' permet de :", options:["Télécharger un fichier","Tester la connectivité réseau avec une machine distante","Configurer une adresse IP","Scanner les ports"], correctAnswer:1, explanation:"ping envoie des paquets ICMP et mesure le temps de réponse, testant la connectivité." },
+      { id:97, theme:"Langages et programmation", question:"Qu'est-ce qu'un décorateur (@) en Python ?", options:["Un commentaire spécial","Un type de boucle","Une fonction qui modifie le comportement d'une autre fonction","Un module externe"], correctAnswer:2, explanation:"Un décorateur prend une fonction en argument et retourne une fonction modifiée. @dec est un raccourci pour f = dec(f)." },
+      { id:98, theme:"Structures de données", question:"Quelle structure utilise le DFS pour parcourir un graphe ?", options:["File","Pile","Tableau trié","Dictionnaire"], correctAnswer:1, explanation:"Le DFS (parcours en profondeur) utilise une pile (LIFO), implicitement via la récursion ou explicitement." },
+      { id:99, theme:"Algorithmique", question:"Le problème du sac à dos (0/1) est résolu optimalement par :", options:["Un algorithme glouton","La recherche dichotomique","La programmation dynamique","Le tri rapide"], correctAnswer:2, explanation:"Le sac à dos 0/1 se résout par programmation dynamique. L'approche greedy n'est pas toujours optimale." },
+      { id:100, theme:"Bases de données", question:"Qu'est-ce qu'une vue (VIEW) en SQL ?", options:["Une copie physique d'une table","Une requête stockée qui se comporte comme une table virtuelle","Un type d'index","Un procédure stockée"], correctAnswer:1, explanation:"Une vue est une requête SELECT sauvegardée. Elle se comporte comme une table mais ne stocke pas de données." }
+    ];
+
+    let selectedQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startQuiz() {
+      selectedQuestions = shuffle(ALL_QUESTIONS).slice(0, 20);
+      currentIndex = 0;
+      score = 0;
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'none';
+      document.getElementById('quiz-screen').style.display = 'block';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = selectedQuestions[currentIndex];
+      const total = selectedQuestions.length;
+      document.getElementById('q-counter').textContent = `Question ${currentIndex + 1} / ${total}`;
+      document.getElementById('score-live').textContent = `Score : ${score}`;
+      document.getElementById('progress-fill').style.width = `${((currentIndex) / total) * 100}%`;
+      document.getElementById('q-theme').textContent = q.theme;
+      document.getElementById('q-num').textContent = `Question ${currentIndex + 1}`;
+      document.getElementById('q-text').textContent = q.question;
+      document.getElementById('explanation').classList.remove('show');
+      document.getElementById('explanation').textContent = '';
+      document.getElementById('next-btn').style.display = 'none';
+
+      const optionsEl = document.getElementById('options');
+      optionsEl.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = () => selectAnswer(i, q);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(index, q) {
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons.forEach(b => b.disabled = true);
+
+      buttons[q.correctAnswer].classList.add('correct');
+      if (index !== q.correctAnswer) {
+        buttons[index].classList.add('wrong');
+      } else {
+        score++;
+      }
+
+      const exp = document.getElementById('explanation');
+      exp.textContent = q.explanation;
+      exp.classList.add('show');
+      document.getElementById('score-live').textContent = `Score : ${score}`;
+      document.getElementById('next-btn').style.display = 'inline-block';
+      document.getElementById('next-btn').textContent =
+        currentIndex + 1 < selectedQuestions.length ? 'Question suivante →' : 'Voir le résultat →';
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < selectedQuestions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById('quiz-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = 'block';
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('score-detail').textContent = `${score} bonnes réponses sur ${selectedQuestions.length} questions`;
+
+      let msg = '';
+      if (score >= 18) msg = 'Excellent ! Vous maîtrisez parfaitement le programme.';
+      else if (score >= 15) msg = 'Très bien ! Quelques points à consolider.';
+      else if (score >= 10) msg = 'Bien ! Continuez à réviser les cours.';
+      else if (score >= 6) msg = 'Des lacunes à combler — consultez les fiches de cours.';
+      else msg = 'Il faut reprendre les bases. Les fiches de cours sont là pour vous aider !';
+      document.getElementById('score-msg').textContent = msg;
+    }
+  </script>
+</body>
+</html>

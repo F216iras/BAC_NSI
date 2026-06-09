@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exercices NSI</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav>
+    <a class="nav-logo" href="index.html">Révision NSI</a>
+    <div class="nav-links">
+      <a href="index.html">Accueil</a>
+      <a href="quiz.html">Quiz</a>
+      <a href="cours.html">Cours</a>
+      <a href="exercices.html" class="active">Exercices</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 style="font-size:1.8rem;font-weight:700;margin-bottom:0.5rem">Exercices Python</h1>
+    <p style="color:var(--muted);margin-bottom:1.5rem">Entraînez-vous avec des exercices corrigés et commentés.</p>
+
+    <div class="filters" id="filters">
+      <span class="filter-label">Niveau :</span>
+      <button class="filter-btn active" data-niveau="Tous" onclick="setFilter(this,'niveau')">Tous</button>
+      <button class="filter-btn" data-niveau="Facile" onclick="setFilter(this,'niveau')">Facile</button>
+      <button class="filter-btn" data-niveau="Moyen" onclick="setFilter(this,'niveau')">Moyen</button>
+      <button class="filter-btn" data-niveau="Difficile" onclick="setFilter(this,'niveau')">Difficile</button>
+      <span class="filter-label" style="margin-left:1rem">Thème :</span>
+      <button class="filter-btn active" data-theme="Tous" onclick="setFilter(this,'theme')">Tous</button>
+      <button class="filter-btn" data-theme="Récursivité" onclick="setFilter(this,'theme')">Récursivité</button>
+      <button class="filter-btn" data-theme="Structures de données" onclick="setFilter(this,'theme')">Structures</button>
+      <button class="filter-btn" data-theme="Algorithmique" onclick="setFilter(this,'theme')">Algorithmique</button>
+      <button class="filter-btn" data-theme="Bases de données" onclick="setFilter(this,'theme')">Bases de données</button>
+    </div>
+
+    <div id="exo-list"></div>
+  </div>
+
+  <footer>Révision NSI Terminal</footer>
+
+  <script>
+    const EXERCICES = [
+      {
+        id: 1,
+        titre: "Factorielle récursive",
+        theme: "Récursivité",
+        niveau: "Facile",
+        enonce: "Écrire une fonction récursive factorielle(n) qui retourne n! Par convention, 0! = 1.",
+        code_depart: `def factorielle(n):
+    # À compléter
+    pass
+
+# Tests
+print(factorielle(0))  # Attendu : 1
+print(factorielle(5))  # Attendu : 120
+print(factorielle(10)) # Attendu : 3628800`,
+        correction: `def factorielle(n):
+    if n == 0:          # Cas de base
+        return 1
+    return n * factorielle(n - 1)  # Appel récursif
+
+print(factorielle(0))  # 1
+print(factorielle(5))  # 120
+print(factorielle(10)) # 3628800`,
+        explication: "Le cas de base est n == 0, qui retourne 1. Pour n > 0, on multiplie n par factorielle(n-1). La récursion s'arrête quand n atteint 0."
+      },
+      {
+        id: 2,
+        titre: "Implémentation d'une pile",
+        theme: "Structures de données",
+        niveau: "Facile",
+        enonce: "Implémenter une classe Pile avec les méthodes : push(element), pop(), peek(), est_vide() et __len__().",
+        code_depart: `class Pile:
+    def __init__(self):
+        self.elements = []
+
+    def push(self, element):
+        # Empiler l'élément
+        pass
+
+    def pop(self):
+        # Dépiler et retourner le sommet (None si vide)
+        pass
+
+    def peek(self):
+        # Retourner le sommet sans dépiler (None si vide)
+        pass
+
+    def est_vide(self):
+        # Retourner True si la pile est vide
+        pass
+
+    def __len__(self):
+        pass
+
+# Tests
+p = Pile()
+p.push(1); p.push(2); p.push(3)
+print(p.peek())  # 3
+print(p.pop())   # 3
+print(len(p))    # 2`,
+        correction: `class Pile:
+    def __init__(self):
+        self.elements = []
+
+    def push(self, element):
+        self.elements.append(element)
+
+    def pop(self):
+        if self.est_vide():
+            return None
+        return self.elements.pop()
+
+    def peek(self):
+        if self.est_vide():
+            return None
+        return self.elements[-1]
+
+    def est_vide(self):
+        return len(self.elements) == 0
+
+    def __len__(self):
+        return len(self.elements)
+
+p = Pile()
+p.push(1); p.push(2); p.push(3)
+print(p.peek())  # 3
+print(p.pop())   # 3
+print(len(p))    # 2`,
+        explication: "La pile utilise une liste Python. append() empile, pop() dépile le dernier élément (LIFO). peek() accède à l'index [-1] sans modifier la liste."
+      },
+      {
+        id: 3,
+        titre: "Implémentation d'une file",
+        theme: "Structures de données",
+        niveau: "Facile",
+        enonce: "Implémenter une classe File avec les méthodes : enqueue(element), dequeue(), front(), est_vide() et __len__(). Utiliser collections.deque pour l'efficacité.",
+        code_depart: `from collections import deque
+
+class File:
+    def __init__(self):
+        self.elements = deque()
+
+    def enqueue(self, element):
+        # Enfiler l'élément en queue
+        pass
+
+    def dequeue(self):
+        # Défiler l'élément de tête (None si vide)
+        pass
+
+    def front(self):
+        # Lire la tête sans défiler (None si vide)
+        pass
+
+    def est_vide(self):
+        pass
+
+    def __len__(self):
+        pass
+
+# Tests
+f = File()
+f.enqueue('A'); f.enqueue('B'); f.enqueue('C')
+print(f.front())    # 'A'
+print(f.dequeue())  # 'A'
+print(len(f))       # 2`,
+        correction: `from collections import deque
+
+class File:
+    def __init__(self):
+        self.elements = deque()
+
+    def enqueue(self, element):
+        self.elements.append(element)  # Ajouter en queue (droite)
+
+    def dequeue(self):
+        if self.est_vide():
+            return None
+        return self.elements.popleft()  # Retirer en tête (gauche) O(1)
+
+    def front(self):
+        if self.est_vide():
+            return None
+        return self.elements[0]
+
+    def est_vide(self):
+        return len(self.elements) == 0
+
+    def __len__(self):
+        return len(self.elements)
+
+f = File()
+f.enqueue('A'); f.enqueue('B'); f.enqueue('C')
+print(f.front())    # 'A'
+print(f.dequeue())  # 'A'
+print(len(f))       # 2`,
+        explication: "deque (double-ended queue) permet popleft() en O(1) contrairement à list.pop(0) qui est O(n). append() ajoute à droite, popleft() retire à gauche : FIFO parfait."
+      },
+      {
+        id: 4,
+        titre: "Recherche dichotomique",
+        theme: "Algorithmique",
+        niveau: "Moyen",
+        enonce: "Implémenter la recherche dichotomique dans un tableau trié. Retourne l'index de la valeur, ou -1 si absente.",
+        code_depart: `def recherche_dichotomique(tableau, valeur):
+    gauche = 0
+    droite = len(tableau) - 1
+
+    while gauche <= droite:
+        # Calculer le milieu
+        # Comparer et ajuster les bornes
+        pass
+
+    return -1  # Valeur non trouvée
+
+# Tests
+t = [1, 3, 5, 7, 9, 11, 13, 15]
+print(recherche_dichotomique(t, 7))   # 3
+print(recherche_dichotomique(t, 6))   # -1
+print(recherche_dichotomique(t, 15))  # 7`,
+        correction: `def recherche_dichotomique(tableau, valeur):
+    gauche = 0
+    droite = len(tableau) - 1
+
+    while gauche <= droite:
+        milieu = (gauche + droite) // 2
+
+        if tableau[milieu] == valeur:
+            return milieu
+        elif tableau[milieu] < valeur:
+            gauche = milieu + 1  # Chercher à droite
+        else:
+            droite = milieu - 1  # Chercher à gauche
+
+    return -1
+
+t = [1, 3, 5, 7, 9, 11, 13, 15]
+print(recherche_dichotomique(t, 7))   # 3
+print(recherche_dichotomique(t, 6))   # -1
+print(recherche_dichotomique(t, 15))  # 7`,
+        explication: "La dichotomie divise l'espace de recherche par 2 à chaque itération. Complexité : O(log n). Le tableau doit être trié."
+      },
+      {
+        id: 5,
+        titre: "Fibonacci avec mémoïsation",
+        theme: "Récursivité",
+        niveau: "Moyen",
+        enonce: "Implémenter la suite de Fibonacci avec mémoïsation. fib(0)=0, fib(1)=1, fib(n)=fib(n-1)+fib(n-2).",
+        code_depart: `def fib_memo(n, memo={}):
+    # 1. Vérifier si déjà calculé
+    # 2. Traiter les cas de base (n <= 1)
+    # 3. Calculer, mémoriser et retourner
+    pass
+
+# Tests
+print(fib_memo(0))   # 0
+print(fib_memo(1))   # 1
+print(fib_memo(10))  # 55
+print(fib_memo(50))  # 12586269025`,
+        correction: `def fib_memo(n, memo={}):
+    if n in memo:
+        return memo[n]
+    if n <= 1:
+        return n
+    memo[n] = fib_memo(n-1, memo) + fib_memo(n-2, memo)
+    return memo[n]
+
+# Alternative élégante avec décorateur :
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n):
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+
+print(fib_memo(10))  # 55
+print(fib_memo(50))  # 12586269025`,
+        explication: "Sans mémoïsation : O(2^n). Avec mémoïsation : chaque valeur est calculée une seule fois → O(n). @lru_cache fait la même chose automatiquement."
+      },
+      {
+        id: 6,
+        titre: "Tri par insertion",
+        theme: "Algorithmique",
+        niveau: "Moyen",
+        enonce: "Implémenter le tri par insertion. À chaque étape, insérer l'élément courant à sa bonne place dans la partie déjà triée.",
+        code_depart: `def tri_insertion(tableau):
+    t = tableau[:]  # Copie pour ne pas modifier l'original
+
+    for i in range(1, len(t)):
+        cle = t[i]
+        j = i - 1
+        # Décaler les éléments > cle vers la droite
+        # Puis insérer cle à la bonne position
+        pass
+
+    return t
+
+# Test
+print(tri_insertion([64, 34, 25, 12, 22, 11, 90]))
+# Attendu : [11, 12, 22, 25, 34, 64, 90]`,
+        correction: `def tri_insertion(tableau):
+    t = tableau[:]
+
+    for i in range(1, len(t)):
+        cle = t[i]
+        j = i - 1
+
+        while j >= 0 and t[j] > cle:
+            t[j + 1] = t[j]  # Décaler vers la droite
+            j -= 1
+
+        t[j + 1] = cle  # Insérer à la bonne place
+
+    return t
+
+print(tri_insertion([64, 34, 25, 12, 22, 11, 90]))
+# [11, 12, 22, 25, 34, 64, 90]`,
+        explication: "Complexité : O(n²) en pire cas, O(n) si presque trié. Il est stable (préserve l'ordre des égaux), en place (pas de mémoire supplémentaire) et adaptatif."
+      },
+      {
+        id: 7,
+        titre: "Tri fusion (Merge Sort)",
+        theme: "Algorithmique",
+        niveau: "Difficile",
+        enonce: "Implémenter le tri fusion (diviser pour régner). Diviser le tableau en deux moitiés, trier chacune récursivement, puis fusionner.",
+        code_depart: `def tri_fusion(tableau):
+    if len(tableau) <= 1:
+        return tableau
+
+    milieu = len(tableau) // 2
+    gauche = tri_fusion(tableau[:milieu])
+    droite = tri_fusion(tableau[milieu:])
+
+    return fusionner(gauche, droite)
+
+def fusionner(gauche, droite):
+    # Fusionner deux tableaux triés en un tableau trié
+    resultat = []
+    i = j = 0
+    # À compléter
+    pass
+
+# Test
+print(tri_fusion([38, 27, 43, 3, 9, 82, 10]))
+# Attendu : [3, 9, 10, 27, 38, 43, 82]`,
+        correction: `def tri_fusion(tableau):
+    if len(tableau) <= 1:
+        return tableau
+
+    milieu = len(tableau) // 2
+    gauche = tri_fusion(tableau[:milieu])
+    droite = tri_fusion(tableau[milieu:])
+    return fusionner(gauche, droite)
+
+def fusionner(gauche, droite):
+    resultat = []
+    i = j = 0
+
+    while i < len(gauche) and j < len(droite):
+        if gauche[i] <= droite[j]:
+            resultat.append(gauche[i])
+            i += 1
+        else:
+            resultat.append(droite[j])
+            j += 1
+
+    # Ajouter les éléments restants
+    resultat.extend(gauche[i:])
+    resultat.extend(droite[j:])
+    return resultat
+
+print(tri_fusion([38, 27, 43, 3, 9, 82, 10]))
+# [3, 9, 10, 27, 38, 43, 82]`,
+        explication: "Diviser pour régner : diviser en 2 (O(log n) niveaux) puis fusionner (O(n) par niveau) → O(n log n) dans tous les cas. Stable mais nécessite O(n) mémoire supplémentaire."
+      },
+      {
+        id: 8,
+        titre: "Parcours en largeur (BFS)",
+        theme: "Algorithmique",
+        niveau: "Difficile",
+        enonce: "Implémenter le BFS (parcours en largeur) d'un graphe représenté par liste d'adjacence. Retourner les sommets dans l'ordre de visite.",
+        code_depart: `from collections import deque
+
+def bfs(graphe, depart):
+    # Utiliser une file (deque)
+    # Marquer les sommets visités
+    # Retourner l'ordre de visite
+    pass
+
+# Test
+graphe = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C']
+}
+print(bfs(graphe, 'A'))
+# Attendu : ['A', 'B', 'C', 'D', 'E', 'F']`,
+        correction: `from collections import deque
+
+def bfs(graphe, depart):
+    visites = [depart]
+    file = deque([depart])
+
+    while file:
+        sommet = file.popleft()  # Défiler (FIFO)
+
+        for voisin in graphe[sommet]:
+            if voisin not in visites:
+                visites.append(voisin)
+                file.append(voisin)  # Enfiler
+
+    return visites
+
+graphe = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'], 'E': ['B'], 'F': ['C']
+}
+print(bfs(graphe, 'A'))
+# ['A', 'B', 'C', 'D', 'E', 'F']`,
+        explication: "BFS explore niveau par niveau grâce à la file FIFO. On marque les visités pour éviter les boucles infinies. Complexité : O(V+E) où V = sommets, E = arêtes. Trouve le plus court chemin dans un graphe non pondéré."
+      },
+      {
+        id: 9,
+        titre: "Parcours en profondeur (DFS)",
+        theme: "Algorithmique",
+        niveau: "Difficile",
+        enonce: "Implémenter le DFS (parcours en profondeur) de façon récursive sur un graphe représenté par liste d'adjacence.",
+        code_depart: `def dfs(graphe, depart, visites=None):
+    # Initialiser visites si besoin
+    # Marquer le sommet courant comme visité
+    # Explorer récursivement chaque voisin non visité
+    pass
+
+# Test
+graphe = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'F': ['C']
+}
+print(dfs(graphe, 'A'))
+# Exemple de sortie : ['A', 'B', 'D', 'C', 'F']`,
+        correction: `def dfs(graphe, depart, visites=None):
+    if visites is None:
+        visites = []
+
+    visites.append(depart)  # Marquer comme visité
+
+    for voisin in graphe[depart]:
+        if voisin not in visites:
+            dfs(graphe, voisin, visites)  # Appel récursif
+
+    return visites
+
+graphe = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'F': ['C']
+}
+print(dfs(graphe, 'A'))
+# ['A', 'B', 'D', 'C', 'F']`,
+        explication: "DFS utilise la pile d'appels récursifs (implicitement). Il explore aussi loin que possible avant de revenir en arrière. Utilisé pour : détection de cycles, tri topologique, composantes connexes."
+      },
+      {
+        id: 10,
+        titre: "Requêtes SQL",
+        theme: "Bases de données",
+        niveau: "Facile",
+        enonce: "Écrire des requêtes SQL pour une table eleves(id INT, nom TEXT, classe TEXT, moyenne REAL) : 1) Élèves avec moyenne > 12, triés par moyenne décroissante. 2) Nombre d'élèves par classe. 3) Moyenne générale de la classe 'Terminale A'.",
+        code_depart: `-- Table : eleves(id INT, nom TEXT, classe TEXT, moyenne REAL)
+-- Données exemple :
+-- (1, 'Alice', 'Terminale A', 14.5)
+-- (2, 'Bob',   'Terminale B', 8.0)
+-- (3, 'Clara', 'Terminale A', 16.0)
+-- (4, 'David', 'Terminale B', 13.5)
+
+-- 1) Sélectionner les élèves avec moyenne > 12, triés par moyenne décroissante
+
+
+-- 2) Compter le nombre d'élèves par classe
+
+
+-- 3) Calculer la moyenne générale de la classe 'Terminale A'
+`,
+        correction: `-- 1) Élèves avec moyenne > 12, triés par moyenne décroissante
+SELECT nom, classe, moyenne
+FROM eleves
+WHERE moyenne > 12
+ORDER BY moyenne DESC;
+
+-- 2) Nombre d'élèves par classe
+SELECT classe, COUNT(*) AS nb_eleves
+FROM eleves
+GROUP BY classe
+ORDER BY classe;
+
+-- 3) Moyenne générale de 'Terminale A'
+SELECT AVG(moyenne) AS moyenne_classe
+FROM eleves
+WHERE classe = 'Terminale A';`,
+        explication: "WHERE filtre avant regroupement. ORDER BY DESC trie de façon décroissante. GROUP BY + COUNT(*) compte par groupe. AVG() calcule la moyenne — c'est une fonction d'agrégation."
+      },
+      {
+        id: 11,
+        titre: "Jointure SQL",
+        theme: "Bases de données",
+        niveau: "Moyen",
+        enonce: "Écrire une requête SQL avec jointure. Tables : eleves(id, nom, classe_id) et classes(id, intitule, professeur). Afficher le nom de chaque élève avec l'intitulé de sa classe et son professeur.",
+        code_depart: `-- Table eleves : id INT, nom TEXT, classe_id INT
+-- Table classes : id INT, intitule TEXT, professeur TEXT
+
+-- Afficher : nom_eleve | intitule_classe | professeur
+-- pour tous les élèves dont la classe existe
+
+
+-- Bonus : afficher aussi les élèves sans classe assignée
+`,
+        correction: `-- Jointure INNER (uniquement les élèves avec une classe)
+SELECT e.nom, c.intitule, c.professeur
+FROM eleves e
+INNER JOIN classes c ON e.classe_id = c.id
+ORDER BY e.nom;
+
+-- Bonus : LEFT JOIN (tous les élèves, même sans classe)
+SELECT e.nom,
+       COALESCE(c.intitule, 'Sans classe') AS classe,
+       COALESCE(c.professeur, '-') AS professeur
+FROM eleves e
+LEFT JOIN classes c ON e.classe_id = c.id
+ORDER BY e.nom;`,
+        explication: "INNER JOIN ne retourne que les lignes avec correspondance dans les deux tables. LEFT JOIN retourne tous les enregistrements de gauche (eleves) même sans correspondance à droite. COALESCE remplace NULL par une valeur par défaut."
+      },
+      {
+        id: 12,
+        titre: "Arbre Binaire de Recherche",
+        theme: "Structures de données",
+        niveau: "Difficile",
+        enonce: "Implémenter un ABR avec les méthodes inserer(valeur) et rechercher(valeur). Ajouter aussi parcours_infixe() qui retourne les valeurs triées.",
+        code_depart: `class Noeud:
+    def __init__(self, valeur):
+        self.valeur = valeur
+        self.gauche = None
+        self.droit = None
+
+class ABR:
+    def __init__(self):
+        self.racine = None
+
+    def inserer(self, valeur):
+        # Insérer récursivement
+        pass
+
+    def rechercher(self, valeur):
+        # Retourner True si valeur présente
+        pass
+
+    def parcours_infixe(self):
+        # Retourner la liste des valeurs en ordre croissant
+        pass
+
+# Tests
+arbre = ABR()
+for v in [5, 3, 7, 1, 4, 6, 8]:
+    arbre.inserer(v)
+print(arbre.rechercher(4))        # True
+print(arbre.rechercher(9))        # False
+print(arbre.parcours_infixe())    # [1, 3, 4, 5, 6, 7, 8]`,
+        correction: `class Noeud:
+    def __init__(self, valeur):
+        self.valeur = valeur
+        self.gauche = None
+        self.droit = None
+
+class ABR:
+    def __init__(self):
+        self.racine = None
+
+    def inserer(self, valeur):
+        self.racine = self._inserer(self.racine, valeur)
+
+    def _inserer(self, noeud, valeur):
+        if noeud is None:
+            return Noeud(valeur)
+        if valeur < noeud.valeur:
+            noeud.gauche = self._inserer(noeud.gauche, valeur)
+        elif valeur > noeud.valeur:
+            noeud.droit = self._inserer(noeud.droit, valeur)
+        return noeud
+
+    def rechercher(self, valeur):
+        return self._rechercher(self.racine, valeur)
+
+    def _rechercher(self, noeud, valeur):
+        if noeud is None:
+            return False
+        if valeur == noeud.valeur:
+            return True
+        if valeur < noeud.valeur:
+            return self._rechercher(noeud.gauche, valeur)
+        return self._rechercher(noeud.droit, valeur)
+
+    def parcours_infixe(self):
+        resultat = []
+        self._infixe(self.racine, resultat)
+        return resultat
+
+    def _infixe(self, noeud, resultat):
+        if noeud is None:
+            return
+        self._infixe(noeud.gauche, resultat)
+        resultat.append(noeud.valeur)
+        self._infixe(noeud.droit, resultat)
+
+arbre = ABR()
+for v in [5, 3, 7, 1, 4, 6, 8]:
+    arbre.inserer(v)
+print(arbre.rechercher(4))      # True
+print(arbre.rechercher(9))      # False
+print(arbre.parcours_infixe())  # [1, 3, 4, 5, 6, 7, 8]`,
+        explication: "L'ABR place les valeurs < à gauche et > à droite. Le parcours infixe (gauche, racine, droite) retourne toujours les valeurs triées. Insertion et recherche : O(log n) si équilibré, O(n) dans le pire cas."
+      }
+    ];
+
+    let filtreNiveau = 'Tous';
+    let filtreTheme = 'Tous';
+
+    function setFilter(btn, type) {
+      const val = btn.dataset[type];
+      if (type === 'niveau') {
+        filtreNiveau = val;
+        document.querySelectorAll('[data-niveau]').forEach(b => b.classList.toggle('active', b.dataset.niveau === val));
+      } else {
+        filtreTheme = val;
+        document.querySelectorAll('[data-theme]').forEach(b => b.classList.toggle('active', b.dataset.theme === val));
+      }
+      renderExos();
+    }
+
+    function renderExos() {
+      const list = document.getElementById('exo-list');
+      const filtered = EXERCICES.filter(e =>
+        (filtreNiveau === 'Tous' || e.niveau === filtreNiveau) &&
+        (filtreTheme === 'Tous' || e.theme === filtreTheme)
+      );
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:2rem">Aucun exercice pour ces filtres.</p>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(e => {
+        const badgeClass = e.niveau === 'Facile' ? 'badge-facile' : e.niveau === 'Moyen' ? 'badge-moyen' : 'badge-difficile';
+        return `
+          <div class="exo-card">
+            <div class="exo-header">
+              <div class="exo-title">${e.titre}</div>
+              <span class="badge ${badgeClass}">${e.niveau}</span>
+            </div>
+            <div class="exo-meta">${e.theme}</div>
+            <div class="exo-enonce">${e.enonce}</div>
+            <div style="margin-bottom:0.75rem">
+              <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem">Code de départ :</div>
+              <pre>${escHtml(e.code_depart)}</pre>
+            </div>
+            <button class="toggle-correction" onclick="toggleCorrection(this)">Voir la correction</button>
+            <div class="correction-wrap">
+              <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem">Correction :</div>
+              <pre>${escHtml(e.correction)}</pre>
+              <div class="explication">${e.explication}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function toggleCorrection(btn) {
+      const wrap = btn.nextElementSibling;
+      const isOpen = wrap.classList.contains('show');
+      wrap.classList.toggle('show', !isOpen);
+      btn.textContent = isOpen ? 'Voir la correction' : 'Masquer la correction';
+    }
+
+    renderExos();
+  </script>
+</body>
+</html>
